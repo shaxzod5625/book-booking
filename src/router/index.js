@@ -6,7 +6,8 @@ const routes = [
         name: 'Home',
         component: () => import('../views/Main/Home.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: false
         }
     },
     {
@@ -14,7 +15,8 @@ const routes = [
         name: 'Login',
         component: () => import('../views/Main/Login.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: false
         }
     },
     {
@@ -22,7 +24,8 @@ const routes = [
         name: 'Register',
         component: () => import('../views/Main/Register.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: false
         }
     },
     {
@@ -30,7 +33,8 @@ const routes = [
         name: 'Profile',
         component: () => import('../views/Main/Profile.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: true
         }
     },
     {
@@ -38,7 +42,8 @@ const routes = [
         name: 'History',
         component: () => import('../views/Main/History.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: true
         }
     },
     {
@@ -46,7 +51,8 @@ const routes = [
         name: 'Books',
         component: () => import('../views/Main/Books.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: false
         }
     },
     {
@@ -54,7 +60,8 @@ const routes = [
         name: 'Book',
         component: () => import('../views/Main/Book.vue'),
         meta: {
-            layout: 'Main'
+            layout: 'Default',
+            auth: false
         }
     },
     {
@@ -62,7 +69,8 @@ const routes = [
         name: 'Dashboard',
         component: () => import('../views/Admin/Dashboard.vue'),
         meta: {
-            layout: 'Admin'
+            layout: 'admin',
+            auth: true
         }
     },
 ]
@@ -72,4 +80,20 @@ const router = createRouter({
     routes
 })
 
+router.beforeEach((to, from, next) => {
+    const loggedIn = localStorage.getItem('user')
+
+    if (to.matched.some(record => record.meta.auth)) {
+        if (!loggedIn) {
+            next({
+                path: '/login',
+                query: { redirect: to.fullPath }
+            })
+        } else {
+            next()
+        }
+    } else {
+        next()
+    }
+})
 export default router
